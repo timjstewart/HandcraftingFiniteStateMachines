@@ -16,11 +16,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, WaterLevelSensor.Listener {
 
     /**
-     * This class exists for one primary reason: encapsulation.
+     * a class that encapsulates all of the Actuators and Sensors the CoffeeMaker interacts with
      * <p/>
-     * Rather than expose the CoffeeMaker's components (e.g Boiler) from the CoffeeMaker and take the risk that some
-     * other class might decide to command the boiler to do something, the components are wrapped up in a class that is
-     * only passed to classes derived from AbstractState that the CoffeeMaker creates.
+     * Rather than expose the CoffeeMaker's components (e.g Boiler, PotWarmer) from the CoffeeMaker and take the risk
+     * that some other class might decide to command the boiler to do something, the components are wrapped up in a
+     * class that is only passed to classes derived from AbstractState that were created by the CoffeeMaker.
      */
     static class Components {
 
@@ -40,7 +40,7 @@ class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, Wate
         private final BrewButtonSensor brewButton;
 
         /**
-         * Creates a Components object
+         * creates a Components object
          */
         Components(final Boiler boiler,
                    final PotWarmer potWarmer,
@@ -78,14 +78,14 @@ class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, Wate
     }
 
     /**
-     * This is the base class of all CoffeeMaker states.
+     * the base class of all CoffeeMaker states
      * <p/>
      * It never changes state and is useful for deriving state classes that only care about a subset of event sources.
      */
     abstract static class AbstractState {
 
         /**
-         * @return the CoffeeMaker.State enum value that corresponds to a derived class.
+         * @return the CoffeeMaker.State enum value that corresponds to a derived class
          */
         public abstract State getState();
 
