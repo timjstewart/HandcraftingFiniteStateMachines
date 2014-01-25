@@ -6,6 +6,8 @@ import com.timjstewart.sensor.BrewButtonSensor;
 import com.timjstewart.sensor.PotSensor;
 import com.timjstewart.sensor.WaterLevelSensor;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * The Coffee Maker FSM.  It has references to all of its sensors (so that it can query their respective states) and to
  * all of its actuators so that it can control them.
@@ -14,25 +16,32 @@ import com.timjstewart.sensor.WaterLevelSensor;
 class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, WaterLevelSensor.Listener {
 
     /**
-     * This class exists for one reason: encapsulation.
+     * This class exists for one primary reason: encapsulation.
      * <p/>
-     * Rather than expose the CoffeeMaker's components (e.g boiler) from the CoffeeMaker and take the risk that some other
-     * class might decide to command the boiler to do something, the components are wrapped up in a class that is only
-     * passed to classes derived from AbstractState that the CoffeeMaker creates.
+     * Rather than expose the CoffeeMaker's components (e.g Boiler) from the CoffeeMaker and take the risk that some
+     * other class might decide to command the boiler to do something, the components are wrapped up in a class that is
+     * only passed to classes derived from AbstractState that the CoffeeMaker creates.
      */
-    class Components {
+    static class Components {
 
-        // Actuators
+        /**
+         * Actuators
+         */
 
         private final Boiler boiler;
         private final PotWarmer potWarmer;
 
-        // Sensors
+        /**
+         * Sensors
+         */
 
         private final WaterLevelSensor waterLevelSensor;
         private final PotSensor potSensor;
         private final BrewButtonSensor brewButton;
 
+        /**
+         * Creates a Components object
+         */
         Components(final Boiler boiler,
                    final PotWarmer potWarmer,
                    final WaterLevelSensor waterLevelSensor,
@@ -81,21 +90,21 @@ class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, Wate
         public abstract State getState();
 
         /**
-         * called whenever the brew button state changes
+         * called whenever the Brew button state changes
          */
         AbstractState onBrewButtonStateChanged(final Components components, final BrewButtonSensor.State newState) {
             return this;
         }
 
         /**
-         * called whenever pot state changes
+         * called whenever PotSensor state changes
          */
         AbstractState onPotStateChanged(final Components components, final PotSensor.State newState) {
             return this;
         }
 
         /**
-         * called whenever the water level state changes
+         * called whenever the WaterLevelSensor state changes
          */
         AbstractState onWaterLevelStateChanged(final Components components, final WaterLevelSensor.State newState) {
             return this;
@@ -105,7 +114,7 @@ class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, Wate
     /**
      * represents the possible states that the Coffee Pot can be in.
      * <p/>
-     * That state can be interrogated by clients and unit tests.
+     * The state can be interrogated by clients and unit tests (for State Verification).
      * <p/>
      * Each State enum value owns an instance of AbstractState.  This is purely an optimization to reduce the amount of
      * garbage that is generated as the state machine is transitioned through.
@@ -125,14 +134,14 @@ class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, Wate
 
         WarmingInterrupted(new WarmingInterruptedState());
 
-        private final AbstractState impl;
+        private final AbstractState state;
 
         State(AbstractState abstractState) {
-            this.impl = abstractState;
+            this.state = abstractState;
         }
 
         AbstractState get() {
-            return impl;
+            return state;
         }
     }
 
@@ -145,12 +154,12 @@ class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, Wate
     /**
      * Creates a CoffeeMaker object
      *
-     * @param boiler           the boiler used to boil the water
-     * @param potWarmer        the pot warmer used to keep freshly brewed coffee warm
-     * @param waterLevelSensor the water level sensor that detects whether or not there is water in the boiler
-     * @param potSensor        the pot sensor that detects if there is a pot on the warmer plate and, if there is,
+     * @param boiler           the Boiler used to boil the water
+     * @param potWarmer        the PotWarmer used to keep freshly brewed coffee warm
+     * @param waterLevelSensor the WaterLevelSensor that detects whether or not there is water in the Boiler
+     * @param potSensor        the PotSensor that detects if there is a CoffeePot on the WarmerPlate and, if there is,
      *                         whether or not it's empty.
-     * @param brewButton       the brew button that the use presses to initiate a brew/warm cycle.
+     * @param brewButton       the Brew button that the use presses to initiate a brew cycle.
      */
     public CoffeeMaker(
             final Boiler boiler,
@@ -159,6 +168,12 @@ class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, Wate
             final PotSensor potSensor,
             final BrewButtonSensor brewButton
     ) {
+        checkNotNull(boiler, "boiler cannot be null");
+        checkNotNull(potWarmer, "potWarmer cannot be null");
+        checkNotNull(waterLevelSensor, "waterLevelSensor cannot be null");
+        checkNotNull(potSensor, "potSensor cannot be null");
+        checkNotNull(brewButton, "brewButton cannot be null");
+
         components = new Components(boiler, potWarmer, waterLevelSensor, potSensor, brewButton);
 
         // listen for state changes
@@ -178,8 +193,7 @@ class CoffeeMaker implements BrewButtonSensor.Listener, PotSensor.Listener, Wate
     }
 
     /**
-     * State Change Handlers - pass all actuator state changes onto the current state enum value so that it can decide
-     * whether or not to transition to another state.
+     * Sensor State Change Handlers
      */
 
     @Override
