@@ -31,10 +31,6 @@ public class BrewingInterruptedState extends CoffeeMaker.AbstractState {
             final PotSensor.State newState) {
 
         switch (newState) {
-
-
-
-
             case Empty:
                 if (components.getWaterLevelSensor().getWaterLevel() == WaterLevelSensor.State.NotEmpty) {
                     components.getBoiler().turnOn();
