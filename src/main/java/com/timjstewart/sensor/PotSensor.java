@@ -55,7 +55,6 @@ public class PotSensor {
         }
     }
 
-
     /**
      * adds the specified Listener to the set of Listeners that will be notified if/when the state of the PotSensor
      * changes.
