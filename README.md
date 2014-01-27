@@ -332,8 +332,8 @@ subset of the events a state can respond to. Here is the code:
 
             static abstract class AbstractState {
                 AbstractState onBrewButtonStateChanged(BrewButton.State newState) { return this; }
-                AbstractState onWaterLevelChanged(BrewButton.State newState) { return this; }
-                AbstractState onPotStateChanged(BrewButton.State newState) { return this; }
+                AbstractState onWaterLevelChanged(WaterLevelSensor.State newState) { return this; }
+                AbstractState onPotStateChanged(PotSensor.State newState) { return this; }
             }
 
             @Override void onBrewButtonStateChanged(BrewButton.State newState) { /* implementation */ }
@@ -353,8 +353,8 @@ We need to keep track of our FSM's current state so let's add an instance variab
 
             static abstract class AbstractState {
                 public AbstractState onBrewButtonStateChanged(BrewButton.State newState) { return this; }
-                public AbstractState onWaterLevelChanged(BrewButton.State newState) { return this; }
-                public AbstractState onPotStateChanged(BrewButton.State newState) { return this; }
+                public AbstractState onWaterLevelChanged(WaterLevelSensor.State newState) { return this; }
+                public AbstractState onPotStateChanged(PotSensor.State newState) { return this; }
             }
 
             @Override void onBrewButtonStateChanged(BrewButton.State newState) { /* implementation */ }
@@ -383,8 +383,8 @@ That leaves us with:
             static abstract class AbstractState {
                 public State getState();
                 public AbstractState onBrewButtonStateChanged(BrewButton.State newState) { return this; }
-                public AbstractState onWaterLevelChanged(BrewButton.State newState) { return this; }
-                public AbstractState onPotStateChanged(BrewButton.State newState) { return this; }
+                public AbstractState onWaterLevelChanged(WaterLevelSensor.State newState) { return this; }
+                public AbstractState onPotStateChanged(PotSensor.State newState) { return this; }
             }
 
             @Override void onBrewButtonStateChanged(BrewButton.State newState) { /* implementation */ }
@@ -471,8 +471,8 @@ the state classes' event handlers can interact with the Actuators and Sensor of 
         static abstract class AbstractState {
             State getState();
             AbstractState onBrewButtonStateChanged(BrewButton.State newState, Components components) { return this; }
-            AbstractState onWaterLevelChanged(BrewButton.State newState, Components components) { return this; }
-            AbstractState onPotStateChanged(BrewButton.State newState, Components components) { return this; }
+            AbstractState onWaterLevelChanged(WaterLevelSensor.State newState, Components components) { return this; }
+            AbstractState onPotStateChanged(PotSensor.State newState, Components components) { return this; }
         }
 
 Now that we've added our FSM as a listener to all of our Sensor objects, our FSM will get notified whenever a Sensor
